@@ -1,21 +1,19 @@
 #include <iostream>
 #include <string>
 
-// Функция для шифрования текста по методу Цезаря
-std::string encrypt_caesar(const std::string &text, int shift) {
+// Универсальная функция для шифрования и расшифровки текста по методу Цезаря
+std::string caesar_cipher(const std::string &text, int shift) {
     std::string result;
-
-    // Приведение значения shift к допустимому диапазону 0-25
-    shift = shift % 26;
+    shift = shift % 26; // Приведение значения shift к допустимому диапазону
 
     for (char c : text) {
-        if ('a' <= c && c <= 'z') {  // для строчных букв
-            int temp = (c - 'a' + shift) % 26 + 'a';
-            result += static_cast<char>(temp);
-        } else if ('A' <= c && c <= 'Z') {  // для заглавных букв
-            int temp = (c - 'A' + shift) % 26 + 'A';
-            result += static_cast<char>(temp);
-        } else {  // другие символы оставляем без изменений
+        if ('a' <= c && c <= 'z') {
+            char encrypted_char = static_cast<char>('a' + (c - 'a' + shift + 26) % 26);
+            result += encrypted_char;
+        } else if ('A' <= c && c <= 'Z') {
+            char encrypted_char = static_cast<char>('A' + (c - 'A' + shift + 26) % 26);
+            result += encrypted_char;
+        } else {
             result += c;
         }
     }
@@ -23,65 +21,41 @@ std::string encrypt_caesar(const std::string &text, int shift) {
     return result;
 }
 
-// Функция для расшифровки текста по методу Цезаря
-std::string decrypt_caesar(const std::string &text, int shift) {
-    std::string result;
-
-    // Приведение значения shift к допустимому диапазону 0-25
-    shift = shift % 26;
-
-    for (char c : text) {
-        if ('a' <= c && c <= 'z') {  // для строчных букв
-            int temp = (c - 'a' - shift + 26) % 26 + 'a';
-            result += static_cast<char>(temp);
-        } else if ('A' <= c && c <= 'Z') {  // для заглавных букв
-            int temp = (c - 'A' - shift + 26) % 26 + 'A';
-            result += static_cast<char>(temp);
-        } else {  // другие символы оставляем без изменений
-            result += c;
-        }
-    }
-
-    return result;
-}
-
-// Функция для расшифровки методом грубой силы
-void brute_force_decrypt(const std::string &text) {
+// Функция для расшифровки текста методом brute-force
+void brute_force_caesar(const std::string &text) {
+    std::cout << "Результаты brute-force:" << std::endl;
     for (int shift = 1; shift < 26; ++shift) {
-        std::string decrypted_text = decrypt_caesar(text, shift);
-        std::cout << "Сдвиг " << shift << ": " << decrypted_text << std::endl;
+        std::cout << "Shift " << shift << ": " << caesar_cipher(text, -shift) << std::endl;
     }
 }
 
 int main() {
     std::string text;
+    int shift;
     int choice;
 
     // Ввод текста пользователем
     std::cout << "Введите текст: ";
     std::getline(std::cin, text);
 
-    std::cout << "Выберите действие (1 - зашифровать, 2 - расшифровать, 3 - расшифровать методом грубой силы): ";
+    // Запрос действия у пользователя
+    std::cout << "Выберите действие:\n1 - Зашифровать текст\n2 - Расшифровать текст\n3 - Применить brute-force\nВаш выбор: ";
     std::cin >> choice;
 
     if (choice == 1) {
-        int shift;
-        std::cout << "Введите сдвиг: ";
+        std::cout << "Введите сдвиг для шифрования (может быть отрицательным): ";
         std::cin >> shift;
-        std::string encrypted_text = encrypt_caesar(text, shift);
+        std::string encrypted_text = caesar_cipher(text, shift);
         std::cout << "Зашифрованный текст: " << encrypted_text << std::endl;
     } else if (choice == 2) {
-        int shift;
-        std::cout << "Введите сдвиг: ";
+        std::cout << "Введите сдвиг для расшифровки (может быть отрицательным): ";
         std::cin >> shift;
-        std::string decrypted_text = decrypt_caesar(text, shift);
+        std::string decrypted_text = caesar_cipher(text, -shift);
         std::cout << "Расшифрованный текст: " << decrypted_text << std::endl;
     } else if (choice == 3) {
-        std::cout << "Попытка расшифровки методом грубой силы..." << std::endl;
-        brute_force_decrypt(text);
+        brute_force_caesar(text);
     } else {
-        std::cout << "Некорректный выбор!" << std::endl;
-        return 1;
+        std::cout << "Неверный выбор. Программа завершена." << std::endl;
     }
 
     return 0;
