@@ -4,16 +4,19 @@
 // Универсальная функция для шифрования и расшифровки текста по методу Цезаря
 std::string caesar_cipher(const std::string &text, int shift) {
     std::string result;
-    shift = shift % 26; // Приведение значения shift к допустимому диапазону
+    shift = shift % 26; // Приведение значения shift к допустимому диапазону [-25, 25]
 
     for (char c : text) {
         if ('a' <= c && c <= 'z') {
+            // Сдвиг для строчных букв
             char encrypted_char = static_cast<char>('a' + (c - 'a' + shift + 26) % 26);
             result += encrypted_char;
         } else if ('A' <= c && c <= 'Z') {
+            // Сдвиг для заглавных букв
             char encrypted_char = static_cast<char>('A' + (c - 'A' + shift + 26) % 26);
             result += encrypted_char;
         } else {
+            // Другие символы остаются без изменений
             result += c;
         }
     }
